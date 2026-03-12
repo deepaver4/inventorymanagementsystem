@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vastu Direction Checker</title>
+</head>
+
+<body>
+
+<h2>Vastu Direction Recommendation</h2>
+
+<form th:action="@{/vastu/check}" method="get">
+
+    <label>Room Type:</label>
+    <select name="room" required>
+        <option value="Kitchen">Kitchen</option>
+        <option value="Bedroom">Bedroom</option>
+        <option value="Pooja Room">Pooja Room</option>
+        <option value="Living Room">Living Room</option>
+        <option value="Study Room">Study Room</option>
+    </select>
+
+    <br><br>
+
+    <label>Compass Degree:</label>
+    <input type="number" name="degree" min="0" max="360" required>
+
+    <br><br>
+
+    <button type="submit">Check Vastu</button>
+
+</form>
+<div class="result-container" th:if="${result != null}">
+    <h3>Analysis Result:</h3> <div class="result-item">
+    <strong>Result:</strong>
+    <span th:text="${result}">
+    </span> </div>
+</div>
+
+</body>
+</html>
