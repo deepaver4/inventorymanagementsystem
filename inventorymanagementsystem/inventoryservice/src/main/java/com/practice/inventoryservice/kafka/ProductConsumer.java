@@ -20,6 +20,9 @@ public class ProductConsumer implements ConsumerSeekAware {
     @Autowired
     InventoryService inventoryService;
 
+    @Autowired
+    NotificationProducer notificationProducer;
+
     public ProductConsumer(InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
     }
@@ -44,9 +47,17 @@ public class ProductConsumer implements ConsumerSeekAware {
         inventoryRepository.findBySkuCode(orderEvent.getSkuCode()).ifPresent(inventory -> {
             inventory.setQuantity(inventory.getQuantity() - orderEvent.getQuantity());
             inventoryRepository.save(inventory);
+            notificationProducer.updateStock(inventory);
             logger.info("Updated inventory for sku: {}. New quantity: {}",
                     orderEvent.getSkuCode(), inventory.getQuantity());
         });
 
     }
+
+    @KafkaListener(topics = "low-stock-alert", groupId = "inventory-group")
+    public void consumeLowStockAlert(ProductEvent lowStockEvent) {
+        logger.warn("Low stock alert for SKU: {}. Current quantity: {}. Message: {}",
+                lowStockEvent.getSkuCode(), lowStockEvent.getQuantity(), lowStockEvent.getMessage());
+    }
+
 }

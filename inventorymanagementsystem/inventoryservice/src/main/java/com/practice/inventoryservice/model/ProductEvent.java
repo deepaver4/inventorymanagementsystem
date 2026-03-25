@@ -12,4 +12,5 @@ public class ProductEvent {
     private String productId;
     private String skuCode;
     private int quantity;
+    private String message;
 }
